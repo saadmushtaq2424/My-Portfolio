@@ -103,3 +103,29 @@ revealTargets.forEach(el => {
   el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
   revealObserver.observe(el);
 });
+
+// ===== Projects carousel =====
+const projectsGrid = document.querySelector('.projects-grid');
+const projectsPrev = document.getElementById('projectsPrev');
+const projectsNext = document.getElementById('projectsNext');
+
+if (projectsGrid && projectsPrev && projectsNext) {
+  const updateCarouselControls = () => {
+    const maxScroll = projectsGrid.scrollWidth - projectsGrid.clientWidth;
+    projectsPrev.disabled = projectsGrid.scrollLeft <= 4;
+    projectsNext.disabled = projectsGrid.scrollLeft >= maxScroll - 4;
+  };
+
+  const moveProjects = (direction) => {
+    const card = projectsGrid.querySelector('.project-card');
+    const gap = parseFloat(getComputedStyle(projectsGrid).gap) || 0;
+    const distance = card ? card.getBoundingClientRect().width + gap : projectsGrid.clientWidth;
+    projectsGrid.scrollBy({ left: direction * distance, behavior: 'smooth' });
+  };
+
+  projectsPrev.addEventListener('click', () => moveProjects(-1));
+  projectsNext.addEventListener('click', () => moveProjects(1));
+  projectsGrid.addEventListener('scroll', updateCarouselControls, { passive: true });
+  window.addEventListener('resize', updateCarouselControls);
+  updateCarouselControls();
+}
